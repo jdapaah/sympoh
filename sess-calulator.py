@@ -13,6 +13,7 @@ def ind_stats(row):
     stats = {}
     stats['number of sess'] = sum([sum(c[0::2]) for c in cycles])
     stats['number of companies'] = sum([sum(c[1::2]) for c in cycles])
+    stats['cycle raw data'] = cycles
     return stats
 
 def general_stats(database):
@@ -28,7 +29,7 @@ def main():
         database[row[0]] = ind_stats(row)
     while 1:
         try:
-            print(database[input("Member: ")])
+            print(k, v for database[input("Member: ")].items())
         except KeyError:
             print('Misspelled Name/ Not found')
     f.close()
