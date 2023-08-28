@@ -1,1 +1,5 @@
 sess.csv
+.vscode
+*names.txt
+name-generator.py
+anon-rankings.csv

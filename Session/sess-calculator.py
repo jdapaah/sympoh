@@ -29,7 +29,8 @@ def main():
         database[row[0]] = ind_stats(row)
     while 1:
         try:
-            print(k, v for database[input("Member: ")].items())
+            for k, v in database[input("Member: ")].items():
+                print(f"{k}: {v}")
         except KeyError:
             print('Misspelled Name/ Not found')
     f.close()
