@@ -1,5 +1,15 @@
-sess.csv
+#compiled files
+__pycache__
 .vscode
+.DS_Store
+
+#data
+data
+anon-rankings.csv
+sess.csv
+rankings.csv
+
+#anonymizers
 *names.txt
 name-generator.py
-anon-rankings.csv
+

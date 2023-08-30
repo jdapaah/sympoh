@@ -118,32 +118,43 @@ def proccessInput(args: str):
 
 if __name__ == '__main__':
     try: # open file
-        with open(sys.argv[1], 'rb') as f:
+        fname = sys.argv[1]
+        with open(fname, 'rb') as f:
             sympeeps, pieces = pickle.load(f)
         # TODO: confirm that this updates global state.
-    except IndexError or FileNotFoundError: # If no file given or given file doesn't exist 
+    except (IndexError, FileNotFoundError): # If no file given or given file doesn't exist 
         # build model from scratch
         print('Initializing New Dataset')
+        fname = None
         sympeeps, pieces = buildModels()
     try:
         while 1:
             proccessInput(input('* : '))
     except KeyboardInterrupt: # on exit
         pass
-        # save to a new file with random suffix to avoid overwrite of other experiments
-    while 1:
-        try:
-            filepath = 'data' 
-            suffix = ''.join(choices(string.ascii_uppercase, k=4))
-            with open(f'{filepath}/{suffix}.pkl', 'xb') as d,\
-            open(f'{filepath}/names.{suffix}.txt', 'w') as n,\
-            open(f'{filepath}/casts.{suffix}.txt', 'w') as c:
-                pickle.dump((sympeeps, pieces), d)
-                for x in sympeeps:
-                    n.write(f'{x}\n')
-                for x in pieces.values():
-                    c.write(f'{x.id, x.choreographers}\n')
-            print('State saved, Suffix is', suffix)
-            break
-        except FileExistsError:
-            continue
+    if fname:
+        savePrompt = 'Enter O to override experiment %s, '\
+                    'otherwise will save as a new experiment'.format(
+                        fname[fname.rindex('/')+1: fname.rindex('.')])
+    if not fname or input(savePrompt) != 'O':
+        # save to a new file with random suffix 
+        # to avoid overwrite of other experiments
+        while 1: # try new possibly unique suffix
+            try:
+                filepath = 'data' 
+                suffix = ''.join(choices(string.ascii_uppercase, k=4))
+                with open(f'{filepath}/{suffix}.pkl', 'xb') as d,\
+                open(f'{filepath}/names.{suffix}.txt', 'w') as n,\
+                open(f'{filepath}/casts.{suffix}.txt', 'w') as c:
+                    pickle.dump((sympeeps, pieces), d)
+                    for x in sympeeps:
+                        n.write(f'{x}\n')
+                    for x in pieces.values():
+                        c.write(f'{x.id, x.choreographers}\n')
+                print('State saved, Suffix is', suffix)
+                break
+            except FileExistsError: # if suffix is not unique
+                continue # loop back, try again
+    else:
+        with open(sys.argv[1], 'wb') as d:
+            pickle.dump((sympeeps, pieces), d)

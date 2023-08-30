@@ -21,7 +21,10 @@ class Member:
         self.actual = set()
 
     def __str__(self) -> str:
-        return f'{self.id}\n\tPieces: {self.actual}'
+        return f'{self.id}\n'\
+                f'\tPieces: {self.actual}\n'\
+                f'\tLooking for: {self.nw}\n'\
+                f'\tPrefs: {self.prefs}\n'
     
 class Piece:
     # member key rather than object to avoid circular import
@@ -38,7 +41,10 @@ class Piece:
         self.actual = set()
     
     def __str__(self) -> str:
-        return f'{self.id}\n\tChoreographers: {self.choreographers}\n\tMembers: {self.actual}'
+        return f'{self.id}\n'\
+                f'\tChoreographers: {self.choreographers}\n'\
+                f'\tMembers: {self.actual}\n'\
+                f'\tSize: {len(self.actual)}\n'
     
     def overlap(self, other):
         return self.actual & other.actual
@@ -75,7 +81,8 @@ def buildModels():
                                             num_want=(8, 12)) # create piece obj
 
                 prefs.append(piece_map[piece].id) # add to members prefs
-            member = Member(id=memberID, num_want=int(line[1]),
+            member = Member(id=memberID,
+                            num_want=int(line[1]),
                             prefs=prefs)
             members[memberID] = member
     return members, {obj.id: obj for obj in piece_map.values()}
