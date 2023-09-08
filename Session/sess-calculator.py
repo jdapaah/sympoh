@@ -1,4 +1,6 @@
+#!/usr/local/bin/python3
 import csv
+from sys import argv
 
 # TODO: update the 13 to account for cycle 4
 def ind_stats(row):
@@ -16,11 +18,12 @@ def ind_stats(row):
     stats['cycle raw data'] = cycles
     return stats
 
-def general_stats(database):
-    pass
-
 def main():
-    f = open('sess.csv')
+    try:
+        f = open(argv[1])
+    except (FileNotFoundError, IndexError):
+        f = open('raw-sess.csv')
+
     reader = csv.reader(f)
     reader.__next__() # header
     reader.__next__() # header
@@ -29,10 +32,22 @@ def main():
         database[row[0]] = ind_stats(row)
     while 1:
         try:
-            for k, v in database[input("Member: ")].items():
-                print(f"{k}: {v}")
+            key = input("Member: ") 
+            if key.title().startswith(("*Top", '*Bottom')):
+                try:
+                    k = int(key.split()[-1])
+                except ValueError:
+                    print('no number given')
+                top = key.title().startswith("**Top")
+                ranked = sorted(database, key=lambda mem: database[mem]['number of sess'], reverse=top)[:k]
+                print({t: database[t]['number of sess'] for t in ranked})
+            else:
+                for k, v in database[key].items():
+                    print(f"{k}: {v}")
         except KeyError:
             print('Misspelled Name/ Not found')
+        except KeyboardInterrupt:
+            break
     f.close()
 
 if __name__ == '__main__':
